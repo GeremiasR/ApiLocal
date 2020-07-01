@@ -132,5 +132,21 @@ router.get("/productos/buscar/:texto", async (req, res) => {
     }   
 })
 
+router.get("/productos/todos", async (req, res) => {
+    try {
+        const consulta = `SELECT S.CANT_PEND, S.CANT_STOCK, P.COD_ARTICU , P.COD_BARRA, P.DESCRIPCIO, P.FECHA_ALTA, P.MOD_DESCAR, P.PTO_PEDIDO, P.SINONIMO, P.STOCK, P.STOCK_MAXI, P.STOCK_MINI, P.STOCK_NEG, P.FECHA_MODI, P.COD_STA11, P.ID_MEDIDA_STOCK, P.ID_MEDIDA_VENTAS, P.ID_STA11
+        FROM STA11 AS P
+        LEFT JOIN STA19 AS S
+        ON (P.COD_ARTICU = S.COD_ARTICU AND S.COD_DEPOSI = '${local}')`
+        let pool = await sqlserver.connect(mssqlConfig)
+        let results = await pool.request()
+            //.input('input_parameter', sql.Int, value)    
+            .query(consulta)
+        res.json(results['recordset'])
+    } catch (err) {
+        console.log(err)
+    }   
+})
+
 
 module.exports = router;
